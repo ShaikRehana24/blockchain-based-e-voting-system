@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | E-Voting</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* -------- NAVBAR -------- */
+.navbar {
+  height: 64px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(10px);
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.brand span {
+  background: #eef2ff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #2563eb;
+}
+
+.nav-links {
+  display: flex;
+  gap: 22px;
+  font-weight: 600;
+  font-size: 14px;
+  align-items: center;
+  color: #475569;
+}
+
+.nav-link {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #2563eb;
+}
+
+.wallet {
+  font-size: 12px;
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 8px;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -------- MAIN -------- */
+.container {
+  padding: 28px 8%;
+}
+
+.hidden {
+  display: none;
+}
+
+/* -------- LOGIN SCREEN -------- */
+.admin-login-screen {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.login-left h1 {
+  font-size: 40px;
+  margin-bottom: 14px;
+}
+
+.login-left p {
+  font-size: 16px;
+  color: #475569;
+  margin-bottom: 28px;
+  max-width: 520px;
+}
+
+.login-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.feature-card {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  color: #1e293b;
+}
+
+.feature-card span {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.login-btn {
+  background: #2563eb;
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: fit-content;
+  box-shadow: 0 10px 22px rgba(37,99,235,0.35);
+  transition: 0.25s ease;
+}
+
+.login-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.login-note {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Right image */
+.login-right img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+}
+
+/* -------- DASHBOARD HERO -------- */
+.dashboard-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px;
+  background: white;
+  border-radius: 24px;
+  margin-bottom: 25px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+}
+
+.dashboard-hero h2 {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.dashboard-hero p {
+  color: #475569;
+  margin-bottom: 10px;
+}
+.hero-tag {
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #475569;
+  font-weight: 500;
+  cursor: default;
+}
+
+
+.dashboard-hero img {
+  width: 200px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+/* -------- STATS -------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+.stat-card h4 {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.stat-card p {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.stat-card span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* -------- CARDS -------- */
+.card,
+.dashboard-card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+  margin-bottom: 22px;
+}
+
+.card-title,
+.dashboard-card h3 {
+  font-weight: 700;
+  margin-bottom: 14px;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+/* -------- FORMS -------- */
+.form-group {
+  margin-bottom: 12px;
+}
+
+input, select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s;
+  background: #f9fafb;
+}
+
+input:focus, select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+  background: white;
+}
+
+/* -------- BUTTONS -------- */
+button.action {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: 0.25s;
+  font-size: 14px;
+}
+
+.add {
+  background: #22c55e;
+  color: white;
+}
+.add:hover { background: #16a34a; }
+
+.start {
+  background: #2563eb;
+  color: white;
+}
+.start:hover { background: #1d4ed8; }
+
+.stop {
+  background: #ef4444;
+  color: white;
+}
+.stop:hover { background: #dc2626; }
+
+button.action:hover {
+  transform: translateY(-2px);
+}
+
+/* -------- TABLE -------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  padding: 12px 10px;
+  text-align: left;
+}
+
+th {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tr:not(:last-child) td {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge.green {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* -------- ELECTION CONTROLS -------- */
+.wizard-group {
+  margin-bottom: 16px;
+}
+
+.wizard-label {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.toggle-row {
+  display: flex;
+  gap: 14px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #374151;
+}
+
+.toggle-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.toggle-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #334155;
+  border: 1px solid #e5e7eb;
+}
+
+.chip:hover {
+  background: #eef2ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.chip.active {
+  background: #22c55e;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 18px 0;
+}
+
+/* -------- CHART -------- */
+.chart-container {
+  width: 600px;
+  height: 280px;
+  position: relative;
+  margin: auto;
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .admin-login-screen {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .login-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .nav-links {
+    display: none;
+  }
+}
+.result-card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+}
+
+.result-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1e293b;
+}
+
+.result-card p {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+  <!-- ---------- NAVBAR ---------- -->
+  <div class="navbar">
+    <div class="brand">
+      🛡️ E-Voting
+      <span>Admin</span>
+    </div>
+
+    <div class="nav-links">
+      <div class="nav-link active" onclick="showSection('dashboard', this)">Dashboard</div>
+      <div class="nav-link" onclick="showSection('candidates', this)">Candidates</div>
+      <div class="nav-link" onclick="showSection('voters', this)">Voters</div>
+      <div class="nav-link" onclick="showSection('controls', this)">Elections</div>
+      <div class="nav-link" onclick="showSection('results', this)">Results</div>
+      <div id="wallet" class="wallet"></div>
+    </div>
+  </div>
+
+  <!-- ---------- MAIN ---------- -->
+  <div class="container">
+
+    <!-- ---------- LOGIN SCREEN ---------- -->
+   <div id="loginScreen" class="admin-login-screen">
+
+  <div class="login-left">
+    <h1>🗳 Secure E-Voting Admin Portal</h1>
+    <p>Manage candidates, voters, and blockchain elections from one powerful dashboard.</p>
+
+    <div class="login-features">
+      <div class="feature-card">
+        🔐 Blockchain Security
+        <span>Immutable voting records</span>
+      </div>
+      <div class="feature-card">
+        ⚡ Real-Time Results
+        <span>Instant tally updates</span>
+      </div>
+      <div class="feature-card">
+        🌐 Decentralized Network
+        <span>Ethereum-powered system</span>
+      </div>
+    </div>
+
+    <button onclick="adminLogin()" class="login-btn">
+      🔑 Connect Wallet & Enter Admin Panel
+    </button>
+
+    <p class="login-note">Only authorized administrators can access this panel</p>
+  </div>
+
+  <div class="login-right">
+    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=80" />
+  </div>
+
+</div>
+
+
+    <!-- ---------- CONTENT ---------- -->
+    <div id="adminContent" class="hidden">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section id="dashboardSection" class="section">
+
+  <!-- HERO -->
+  <div class="dashboard-hero">
+    <div>
+      <h2>🗳 Election Admin Panel</h2>
+      <p>Secure Blockchain-Based Voting Management System</p>
+      <p>Live Network Monitoring</p>
+    </div>
+    <img src="https://media.istockphoto.com/id/1044238044/vector/vector-vote-color-icon-on-a-black-background-with-voter-hand-insert-envelope-in-ballot-box.jpg?s=1024x1024&w=is&k=20&c=U3PG1Ft-pnQj1I_tq-C_tKpLQi_nDFMJLRF8439sinA=" />
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h4>Total Candidates</h4>
+      <p id="statCandidates">0</p>
+      <span>Registered in blockchain</span>
+    </div>
+
+    <div class="stat-card">
+      <h4>Total Votes</h4>
+      <p id="statVotes">0</p>
+      <span>Live tally</span>
+    </div>
+
+    <div class="stat-card">
+      <h4>Election Status</h4>
+      <p id="statStatus">Inactive</p>
+      <span>System state</span>
+    </div>
+
+    <div class="stat-card">
+      <h4>Total Voters</h4>
+      <p id="statVoters">0</p>
+      <span>Verified wallets</span>
+    </div>
+  </div>
+
+   <!-- INFO ROW -->
+  <div class="dashboard-card" style="grid-column: span 2;">
+  <h3>📊 Candidates vs Votes (Live)</h3>
+  <div class="chart-container">
+    <canvas id="resultsChart"></canvas>
+  </div>
+</div>
+
+
+</section>
+
+      <!-- ===== CANDIDATES ===== -->
+      <div id="candidatesSection" class="hidden">
+        <div class="card">
+          <div class="card-title">🏛 Register Candidate</div>
+
+          <div class="form-group">
+            <input id="candidateName" placeholder="Candidate Name" />
+          </div>
+
+          <div class="form-group">
+            <input id="partyName" placeholder="Party Name" />
+          </div>
+
+          <button class="action add" onclick="addCandidate()">Add Candidate</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📋 Registered Candidates</div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Party</th>
+              </tr>
+            </thead>
+            <tbody id="candidatesTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== VOTERS ===== -->
+      <div id="votersSection" class="hidden">
+        <div class="card">
+          <div class="card-title">🧑‍🤝‍🧑 Register Voter (Wallet)</div>
+
+          <div class="form-group">
+            <input id="voterAddress" placeholder="Voter Wallet Address" />
+          </div>
+
+          <button class="action add" onclick="registerVoter()">Register Voter</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📋 Voter Directory</div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Wallet</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="votersTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== CONTROLS ===== -->
+      <div id="controlsSection" class="hidden">
+        <div class="card">
+          <div class="card-title">⚙️ Election Setup</div>
+
+          <!-- STEP 1 -->
+          <div class="wizard-group">
+            <div class="wizard-label">1️⃣ Election Type</div>
+            <div class="toggle-row">
+              <button class="toggle-btn" id="typeState" onclick="selectElectionType('STATE')">🏛 State</button>
+              <button class="toggle-btn" id="typeMunicipal" onclick="selectElectionType('MUNICIPAL')">🏙 Municipal</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="wizard-group hidden" id="stateGroup">
+            <div class="wizard-label">2️⃣ State</div>
+            <select id="stateSelect" onchange="onStateSelect()">
+              <option value="">Select State</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+            </select>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="wizard-group hidden" id="districtGroup">
+            <div class="wizard-label">3️⃣ District</div>
+            <div id="districtChips" class="chip-grid"></div>
+          </div>
+          <div class="wizard-group hidden" id="municipalityGroup">
+  <div class="wizard-label">4️⃣ Municipality</div>
+  <div id="municipalityChips" class="chip-grid"></div>
+</div>
+
+          <!-- ACTION -->
+          <button id="startElectionBtn" class="action start hidden" onclick="startElectionFlow()">
+            🚀 Start Election
+          </button>
+
+          <hr>
+
+          <button class="action stop" onclick="stopElection()">🔴 Stop Election</button>
+        </div>
+      </div>
+
+      <!-- ===== RESULTS ===== -->
+      <!-- ===== RESULTS ===== -->
+<section id="resultsSection" class="hidden">
+
+  <div class="card-title">📜 Past Election Results</div>
+
+  <div id="resultsCardsContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px;"></div>
+
+</section>
+
+
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Sample data
+  const labels = ["Alice", "Bob", "Charlie"];
+  const votes = [5, 3, 7];
+
+  // Initialize Chart.js with fixed size
+  const ctx = document.getElementById("resultsChart").getContext("2d");
+
+  if (window.resultsChart) {
+    window.resultsChart.destroy(); // destroy previous instance if updating
+  }
+
+  window.resultsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels, // your candidate names
+      datasets: [{
+        label: 'Votes',
+        data: votes,   // your votes array
+        backgroundColor: '#3b82f6',
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: false,          // prevents auto-resizing
+      maintainAspectRatio: false, // makes it respect container size
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+<script src="../js/abi.js" defer></script>
+<script src="../js/web3.js" defer></script>
+<script src="../js/admin.js" defer></script>

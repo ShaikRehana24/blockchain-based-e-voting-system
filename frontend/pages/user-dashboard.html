@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Voting Dashboard</title>
+
+  <!-- Ethers -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="../js/abi.js"></script>
+  <script src="../js/web3.js"></script>
+  <script src="../js/user.js" defer></script>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+  min-height: 100vh;
+  background: linear-gradient(to right, #d9f0ff, #e0f7fa);
+  color: #020617;
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* app container fills the screen */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(15px);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+
+    /* ---------- HEADER ---------- */
+    .header {
+      padding: 22px 28px;
+      background: linear-gradient(135deg, #4dd0e1, #81d4fa);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      color: #020617;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .brand span {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #0288d1;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .wallet-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+    }
+
+    .wallet-address {
+      background: rgba(255,255,255,0.6);
+      padding: 6px 12px;
+      border-radius: 999px;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 600;
+      color: #020617;
+    }
+
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-badge.inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* ---------- CONTENT ---------- */
+    .content {
+      padding: 30px;
+    }
+
+    /* ---------- LOGIN SCREEN ---------- */
+    .login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding: 60px 20px;
+      text-align: center;
+      color: #020617;
+    }
+
+    .login-screen h2 {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #0277bd;
+    }
+
+    .login-screen p {
+      opacity: 0.8;
+      max-width: 520px;
+      line-height: 1.6;
+      color: #064663;
+    }
+
+    .login-btn {
+      margin-top: 12px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #4dd0e1, #0288d1);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transition: 0.25s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    }
+
+    /* ---------- DASHBOARD ---------- */
+    .dashboard {
+      display: none;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    .top-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(16px);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      color: #020617;
+    }
+
+    .info-title {
+      font-size: 12px;
+      opacity: 0.8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .info-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0288d1;
+    }
+
+    .info-sub {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* ---------- CANDIDATES ---------- */
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #0277bd;
+    }
+
+    .refresh-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(0,123,255,0.2);
+      color: #020617;
+      transition: 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(0,123,255,0.4);
+      transform: translateY(-1px);
+    }
+
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .candidate-card {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      transition: 0.25s ease;
+      color: #020617;
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+    }
+
+    .candidate-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0277bd;
+    }
+
+    .candidate-party {
+      font-size: 13px;
+      opacity: 0.8;
+      font-weight: 500;
+      color: #064663;
+    }
+
+    .candidate-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vote-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+      transition: 0.2s;
+    }
+
+    .vote-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(46,125,50,0.4);
+    }
+
+    .vote-btn:disabled {
+      background: #b0bec5;
+      color: #eceff1;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge.leading {
+      background: #0288d1;
+      color: #fff;
+    }
+
+    .badge.voted {
+      background: #43a047;
+      color: #fff;
+    }
+
+    .loading {
+      text-align: center;
+      opacity: 0.8;
+      padding: 30px;
+      font-size: 14px;
+      color: #0277bd;
+    }
+
+    .empty {
+      text-align: center;
+      opacity: 0.7;
+      padding: 30px;
+      font-size: 14px;
+      color: #064663;
+    }
+
+    .footer {
+      padding: 18px 28px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      opacity: 0.7;
+      color: #020617;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="brand">
+        🗳️ E-Voting
+        <span>User</span>
+      </div>
+
+      <div class="wallet-box hidden" id="walletBox">
+        <span id="electionStatusBadge" class="status-badge inactive">Inactive</span>
+        <span id="wallet" class="wallet-address">Not Connected</span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- LOGIN SCREEN -->
+      <div id="loginScreen" class="login-screen">
+        <h2>Secure Blockchain Voting</h2>
+        <p>
+          Cast your vote securely using blockchain technology. Each vote is immutable,
+          transparent, and verifiable. Connect your wallet to continue.
+        </p>
+        <button id="loginBtn" class="login-btn" onclick="login()">
+          🔑 Connect Wallet
+        </button>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div id="dashboard" class="dashboard">
+
+        <!-- TOP STATS -->
+        <div class="top-cards">
+          <div class="info-card">
+            <div class="info-title">Wallet Status</div>
+            <div id="walletStatus" class="info-value">Connected</div>
+            <div class="info-sub">Ethereum account verified</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-title">Election Status</div>
+            <div id="electionStatusCard" class="info-value">Inactive</div>
+            <div class="info-sub">Voting availability</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-title">Your Vote</div>
+            <div id="voteStatus" class="info-value">Not Cast</div>
+            <div class="info-sub">One vote per wallet</div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-title">Security</div>
+            <div class="info-value">🔒 Encrypted</div>
+            <div class="info-sub">Blockchain protected</div>
+          </div>
+        </div>
+
+        <!-- CANDIDATES -->
+        <div class="section-title">
+          <span>🧑‍💼 Candidates</span>
+          <button class="refresh-btn" onclick="loadCandidates()">↻ Refresh</button>
+        </div>
+
+        <div id="candidatesGrid" class="candidates-grid"></div>
+        <div id="candidatesLoading" class="loading hidden">Loading candidates from blockchain…</div>
+        <div id="candidatesEmpty" class="empty hidden">No candidates available.</div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span>© 2026 Blockchain E-Voting System</span>
+      <span>Powered by Ethereum</span>
+    </div>
+
+  </div>
+</body>
+</html>
